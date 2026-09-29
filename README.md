@@ -2,70 +2,74 @@
 
 A lightweight, self-hosted **HTML-to-PNG screenshot API** built with **Node.js, Express, Playwright, and Chromium**.
 
-This service accepts HTML through a simple REST API and returns a full-page PNG screenshot. It is particularly useful for automation workflows where HTML content needs to be rendered as an image before being sent to another service.
+**Email Screenshot API** accepts HTML through a simple REST API, renders it using headless Chromium, and returns a full-page PNG screenshot.
 
-It can be easily deployed using Docker on your own VPS, including platforms such as Coolify.
+It is designed primarily for **email automation**, but can also be used for invoices, reports, notifications, previews, documents, and other HTML-based content that needs to be converted into an image.
 
-## ✨ Features
-
-* Convert HTML into PNG screenshots
-* Full-page screenshots
-* Headless Chromium rendering with Playwright
-* Supports external images, fonts, CSS, and other web resources
-* Simple REST API
-* JSON request body
-* PNG response
-* Health-check endpoint
-* Docker-ready
-* No browser installation required on the host
-* Self-hosted and suitable for private infrastructure
-* Works well with n8n and other automation platforms
+The API is Docker-ready and can be deployed on your own VPS or infrastructure.
 
 ---
 
-## 🏗️ How It Works
+## ✨ Features
+
+* 📧 Convert HTML emails into PNG screenshots
+* 🖼️ Convert any HTML content into PNG
+* 📄 Full-page screenshots
+* 🌐 Supports external images, fonts, CSS, and web resources
+* 🎭 Headless Chromium rendering with Playwright
+* ⚡ Simple REST API
+* 📦 JSON request body
+* 🖼️ PNG response
+* ❤️ Health-check endpoint
+* 🐳 Docker-ready
+* 🔒 Self-hosted and suitable for private infrastructure
+* 🔄 Works with n8n and other automation platforms
+* 🚀 Easy to deploy on a VPS
+* 🧩 No browser installation required on the host when using Docker
+
+---
+
+# 🏗️ How It Works
 
 ```text
-HTML
-  │
-  ▼
+HTML Email
+    │
+    ▼
 POST /screenshot
-  │
-  ▼
+    │
+    ▼
 Express API
-  │
-  ▼
+    │
+    ▼
 Playwright
-  │
-  ▼
+    │
+    ▼
 Headless Chromium
-  │
-  ▼
+    │
+    ▼
 Rendered HTML
-  │
-  ▼
+    │
+    ▼
 PNG Screenshot
 ```
 
-A typical automation workflow can look like:
+A typical email automation workflow can look like:
 
 ```text
 IMAP Email
-     │
-     ▼
-Extract HTML
-     │
-     ▼
+    │
+    ▼
+Extract Email HTML
+    │
+    ▼
 Email Screenshot API
-     │
-     ▼
+    │
+    ▼
 PNG Screenshot
-     │
-     ▼
-Webhook / Storage / Notification
+    │
+    ▼
+WhatsApp / Email / Storage / Notification
 ```
-
-This makes the project useful for automated email processing, visual email archiving, monitoring, reporting, and notification workflows.
 
 ---
 
@@ -73,14 +77,14 @@ This makes the project useful for automated email processing, visual email archi
 
 ## Requirements
 
-You can run the application using Docker, so the host machine does not need a separate Chromium installation.
+The easiest way to run Email Screenshot API is with Docker.
 
 You need:
 
 * Docker
 * Git
 
-Node.js is only required if you want to run the project directly without Docker.
+Node.js is only required if you want to run the application directly without Docker.
 
 ---
 
@@ -89,28 +93,28 @@ Node.js is only required if you want to run the project directly without Docker.
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/email-screenshot.git
+git clone https://github.com/icodedigita/EmailScreenshotAPI.git
 ```
 
 Enter the directory:
 
 ```bash
-cd email-screenshot
+cd EmailScreenshotAPI
 ```
 
 Build the Docker image:
 
 ```bash
-docker build -t email-screenshot .
+docker build -t email-screenshot-api .
 ```
 
 Run the container:
 
 ```bash
 docker run -d \
-  --name email-screenshot \
+  --name email-screenshot-api \
   -p 3000:3000 \
-  email-screenshot
+  email-screenshot-api
 ```
 
 The API will now be available at:
@@ -123,7 +127,7 @@ http://localhost:3000
 
 # ❤️ Health Check
 
-You can verify that the service is running:
+Check whether the API is running:
 
 ```bash
 curl http://localhost:3000/health
@@ -152,7 +156,11 @@ curl -X POST http://localhost:3000/screenshot \
   --output screenshot.png
 ```
 
-The resulting `screenshot.png` will contain the rendered HTML.
+The generated image will be saved as:
+
+```text
+screenshot.png
+```
 
 ---
 
@@ -160,7 +168,7 @@ The resulting `screenshot.png` will contain the rendered HTML.
 
 ## `GET /health`
 
-Checks whether the API is running.
+Checks whether Email Screenshot API is running.
 
 ### Response
 
@@ -200,80 +208,149 @@ Content-Type: application/json
 
 ### Response
 
-The endpoint returns a PNG image:
+The endpoint returns:
 
 ```text
 Content-Type: image/png
 ```
 
-The screenshot is rendered at:
+The browser viewport is configured as:
 
 ```text
 Width: 1200px
-Height: 800px viewport
+Height: 800px
+Device Scale Factor: 1
 ```
 
-The screenshot itself uses:
+The screenshot is generated with:
 
 ```text
 fullPage: true
 ```
 
-so the resulting image includes the complete rendered page rather than only the initial viewport.
+This means the generated PNG contains the complete rendered page rather than only the initial viewport.
 
 ---
 
-# 🧪 Using JavaScript
-
-Example using `fetch`:
+# 🧪 JavaScript Example
 
 ```javascript
-const response = await fetch("http://localhost:3000/screenshot", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <body>
-          <h1>Hello from Email Screenshot API</h1>
-          <p>This HTML will be converted into a PNG.</p>
-        </body>
-      </html>
-    `
-  })
-});
+const response = await fetch(
+  "http://localhost:3000/screenshot",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body>
+            <h1>Hello from Email Screenshot API</h1>
+            <p>This HTML will be converted into a PNG.</p>
+          </body>
+        </html>
+      `
+    })
+  }
+);
+
+if (!response.ok) {
+  throw new Error(
+    `Screenshot API returned ${response.status}`
+  );
+}
 
 const imageBuffer = await response.arrayBuffer();
 ```
 
 ---
 
+# 🐍 Python Example
+
+```python
+import requests
+
+html = """
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello from Python</h1>
+    <p>This HTML will be rendered as a PNG.</p>
+</body>
+</html>
+"""
+
+response = requests.post(
+    "http://localhost:3000/screenshot",
+    json={"html": html}
+)
+
+response.raise_for_status()
+
+with open("screenshot.png", "wb") as file:
+    file.write(response.content)
+
+print("Screenshot saved as screenshot.png")
+```
+
+---
+
 # 🔄 n8n Integration
 
-This API can be used directly from an **n8n HTTP Request node**.
+Email Screenshot API works directly with **n8n** using the HTTP Request node.
 
-A typical workflow:
+A basic workflow:
+
+```text
+HTML
+  │
+  ▼
+HTTP Request
+  │
+  ▼
+Email Screenshot API
+  │
+  ▼
+PNG Binary
+  │
+  ▼
+Next Automation Step
+```
+
+For email automation:
 
 ```text
 IMAP Email
-    ↓
-Extract Email HTML
-    ↓
+    │
+    ▼
+Extract HTML
+    │
+    ▼
 HTTP Request
-    ↓
+    │
+    ▼
 Email Screenshot API
-    ↓
-PNG Binary Data
-    ↓
-Your Next Automation Step
+    │
+    ▼
+PNG
+    │
+    ▼
+WhatsApp / Email / Storage
 ```
 
 ## HTTP Request Node
 
-Configure the HTTP Request node approximately as follows:
+Configure the HTTP Request node:
 
 ### Method
 
@@ -287,11 +364,13 @@ POST
 https://your-domain.com/screenshot
 ```
 
-### Send Body
+### Body Content Type
 
-Enable JSON.
+```text
+JSON
+```
 
-### Body
+### JSON Body
 
 ```json
 {
@@ -299,21 +378,27 @@ Enable JSON.
 }
 ```
 
-The exact expression will depend on where your email HTML is stored in your n8n workflow.
+Configure the response as a **file/binary response**.
 
-### Response
+The generated PNG can then be passed to other n8n nodes.
 
-Configure the HTTP Request node to receive the response as a **file/binary response**.
+### Ready-to-import n8n workflow
 
-The returned binary data will be the generated PNG screenshot.
+A ready-to-import example is included:
+
+[`examples/n8n/html-to-screenshot.json`](./examples/n8n/html-to-screenshot.json)
+
+Additional n8n documentation is available here:
+
+[`docs/n8n.md`](./docs/n8n.md)
 
 ---
 
 # 📧 Email Screenshot Workflow
 
-One of the intended use cases is automatically converting incoming HTML emails into screenshots.
+Email Screenshot API was designed with email automation in mind.
 
-For example:
+A typical workflow:
 
 ```text
                     ┌─────────────────┐
@@ -328,8 +413,8 @@ For example:
                              │
                              ▼
                     ┌─────────────────┐
-                    │ Extract HTML    │
-                    │ Email Content   │
+                    │  Extract Email  │
+                    │      HTML       │
                     └────────┬────────┘
                              │
                              ▼
@@ -350,18 +435,50 @@ For example:
                     └────────┬────────┘
                              │
                              ▼
-                  Webhook / Storage /
-                  Notification / API
+                 WhatsApp / Email /
+                 Storage / Notification
 ```
+
+This can be useful for:
+
+* Email archiving
+* Visual email processing
+* Email notifications
+* WhatsApp email previews
+* Automated reporting
+* Monitoring workflows
+* Visual records of transactional emails
+
+---
+
+# 🎨 HTML Support
+
+Because the HTML is rendered using Chromium, the page can use resources that are accessible from the screenshot server.
+
+Supported resources can include:
+
+* Images
+* Web fonts
+* CSS
+* External stylesheets
+* Other web resources
+
+Example:
+
+```html
+<img src="https://example.com/logo.png">
+```
+
+The screenshot server must be able to access the external resource.
 
 ---
 
 # 🐳 Docker
 
-The project uses the official Playwright Docker image:
+Email Screenshot API uses the official Playwright Docker image:
 
 ```dockerfile
-FROM mcr.microsoft.com/playwright:v1.55.0-noble
+FROM mcr.microsoft.com/playwright:v1.63.0-noble
 
 WORKDIR /app
 
@@ -369,22 +486,24 @@ COPY package*.json ./
 
 RUN npm install --omit=dev
 
-COPY . .
+COPY server.js .
+
+ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
 ```
 
 The Playwright image includes Chromium and the required Linux dependencies.
 
-This avoids having to manually install and configure Chromium on the host server.
+This means you do not need to manually install Chromium on the host machine.
 
 ---
 
 # ☁️ Deploying with Coolify
 
-This project can be deployed directly to a VPS running Coolify.
+Email Screenshot API can be deployed to a VPS using Coolify.
 
 ## 1. Create a New Resource
 
@@ -400,15 +519,15 @@ Git Repository
 
 Connect your GitHub repository.
 
-## 2. Build Pack
+## 2. Build Method
 
-Use:
+Select:
 
 ```text
 Dockerfile
 ```
 
-Coolify will detect the `Dockerfile` and build the application.
+Coolify will build the application using the repository's Dockerfile.
 
 ## 3. Port
 
@@ -426,13 +545,13 @@ Assign your domain, for example:
 https://screenshot.example.com
 ```
 
-Your API endpoint will then be:
+Your screenshot endpoint will then be:
 
 ```text
 https://screenshot.example.com/screenshot
 ```
 
-And the health check:
+Health check:
 
 ```text
 https://screenshot.example.com/health
@@ -442,9 +561,9 @@ https://screenshot.example.com/health
 
 # 🔐 Security Considerations
 
-This project is intentionally lightweight and currently provides a simple rendering API.
+This project provides a lightweight rendering API.
 
-If you expose the API publicly, you should consider adding authentication before allowing arbitrary users to submit HTML.
+If you expose the API publicly, consider adding authentication and additional restrictions.
 
 Potential improvements include:
 
@@ -467,27 +586,26 @@ For private automation infrastructure, placing the service behind a private netw
 
 The API renders user-provided HTML inside Chromium.
 
-If this endpoint is exposed to untrusted users, treat submitted HTML as potentially unsafe input.
+If the endpoint is exposed to untrusted users, submitted HTML should be treated as potentially unsafe input.
 
 A production deployment should consider additional isolation and restrictions around:
 
 * External network requests
 * JavaScript execution
 * Resource consumption
-* Arbitrary URLs
-* Concurrent browser pages
 * Large HTML documents
-* Malicious or intentionally expensive pages
+* Concurrent browser pages
+* Potentially expensive pages
 
-For a trusted internal automation workflow, such as an n8n server sending email HTML to this service, the risk profile is substantially different from exposing the endpoint as a public anonymous API.
+For trusted internal automation, such as an n8n server sending controlled HTML to the API, the risk profile is different from exposing the endpoint as a public anonymous API.
 
 ---
 
 # ⚙️ Configuration
 
-The application currently supports the following environment variable:
+The application currently supports:
 
-### `PORT`
+## `PORT`
 
 Default:
 
@@ -499,9 +617,10 @@ Example:
 
 ```bash
 docker run -d \
+  --name email-screenshot-api \
   -p 3000:3000 \
   -e PORT=3000 \
-  email-screenshot
+  email-screenshot-api
 ```
 
 ---
@@ -509,17 +628,20 @@ docker run -d \
 # 📦 Project Structure
 
 ```text
-email-screenshot/
+EmailScreenshotAPI/
 │
 ├── Dockerfile
-│
 ├── package.json
-│
 ├── server.js
+├── README.md
 │
-├── .gitignore
+├── docs/
+│   └── n8n.md
 │
-└── README.md
+└── examples/
+    └── n8n/
+        ├── README.md
+        └── html-to-screenshot.json
 ```
 
 ### `server.js`
@@ -528,15 +650,19 @@ Contains the Express API and Playwright screenshot functionality.
 
 ### `Dockerfile`
 
-Defines the container image and uses the official Playwright image containing Chromium.
+Defines the Docker image using the official Playwright image with Chromium.
 
 ### `package.json`
 
 Defines the Node.js application and dependencies.
 
-### `README.md`
+### `docs/n8n.md`
 
-Project documentation.
+Detailed documentation for using Email Screenshot API with n8n.
+
+### `examples/n8n/`
+
+Contains ready-to-import n8n workflow examples.
 
 ---
 
@@ -555,26 +681,22 @@ Project documentation.
 
 # 📋 Requirements
 
-The Docker deployment requires only:
+## Docker Deployment
 
-```text
-Docker
-```
+Only Docker is required.
 
-The application itself uses:
+## Local Development
 
-```text
-Node.js
-Express
-Playwright
-Chromium
-```
+You will need:
+
+* Node.js
+* npm
+* Playwright
+* Chromium
 
 ---
 
 # 🛠️ Local Development
-
-If you want to run the project without Docker, install Node.js first.
 
 Install dependencies:
 
@@ -582,7 +704,7 @@ Install dependencies:
 npm install
 ```
 
-Install Playwright browsers:
+Install Playwright Chromium:
 
 ```bash
 npx playwright install chromium
@@ -619,7 +741,7 @@ curl -X POST http://localhost:3000/screenshot \
   --output screenshot.png
 ```
 
-Then open:
+Open:
 
 ```text
 screenshot.png
@@ -641,14 +763,12 @@ Potential future improvements:
 * [ ] Custom user-agent support
 * [ ] Custom HTTP headers
 * [ ] Screenshot quality settings
-* [ ] Authentication support
 * [ ] Request timeout configuration
 * [ ] Browser/page concurrency controls
 * [ ] Queue-based rendering
 * [ ] Optional JavaScript execution controls
-* [ ] n8n workflow examples
 * [ ] Docker Compose example
-* [ ] Production deployment documentation
+* [ ] Additional n8n workflow examples
 
 ---
 
@@ -668,34 +788,70 @@ For larger changes, opening an issue first is recommended so the approach can be
 
 ---
 
-# 📄 License
+# ⭐ Support the Project
 
-Choose a license appropriate for your project before publishing the repository.
+If Email Screenshot API is useful to you, consider giving the repository a ⭐ on GitHub.
 
-For example, if you want a permissive open-source license, you can use the MIT License.
+It helps other developers discover the project and supports continued development.
 
-Add a `LICENSE` file to the repository containing the appropriate license text.
+If you find a bug or have an idea for an improvement, feel free to open an issue or submit a pull request.
 
 ---
 
-# ⭐ Why This Project?
+# 📄 License
 
-Rendering HTML reliably outside a browser can be difficult, especially when dealing with modern email HTML containing CSS, images, fonts, and complex layouts.
+This project is released under the license included in the repository's `LICENSE` file.
 
-This project provides a simple interface:
+See [`LICENSE`](./LICENSE) for the complete license terms.
+
+---
+
+# 💡 Why Email Screenshot API?
+
+HTML emails can contain complex layouts, CSS, images, fonts, tables, and other browser-rendered content.
+
+Getting a reliable image representation of that HTML usually requires a browser engine.
+
+Email Screenshot API provides a simple interface:
 
 ```text
-HTML → API → Chromium → PNG
+HTML Email
+    ↓
+REST API
+    ↓
+Playwright
+    ↓
+Chromium
+    ↓
+PNG
 ```
 
-No browser automation code is required in the calling application.
+Your application or automation platform does not need to manage browser automation itself.
 
 Send HTML to the API and receive a ready-to-use screenshot.
 
 ---
 
-## 📜 License
+# 🚀 Built for Automation
+
+Email Screenshot API can be integrated into almost any workflow:
+
+```text
+Email / HTML Template / Application
+                 │
+                 ▼
+        Email Screenshot API
+                 │
+                 ▼
+                PNG
+                 │
+       ┌─────────┼─────────┐
+       ▼         ▼         ▼
+    WhatsApp   Email    Storage
+```
+
+It can be self-hosted on your own infrastructure and used wherever you need reliable HTML-to-image rendering.
+
+---
 
 © 2026 ICODEDIGITA LLC.
-
-See the `LICENSE` file for licensing information.
