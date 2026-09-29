@@ -1,0 +1,96 @@
+{
+  "name": "HTML to Screenshot API",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "html",
+              "name": "html",
+              "value": "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body{font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;padding:40px;color:#222}.card{max-width:700px;margin:auto;background:#fff;padding:40px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08)}h1{margin-top:0;color:#111827}.badge{display:inline-block;background:#e8f5e9;color:#2e7d32;padding:6px 12px;border-radius:20px;font-size:13px;font-weight:bold}</style></head><body><div class=\"card\"><span class=\"badge\">n8n + HTML Screenshot API</span><h1>Hello from n8n!</h1><p>This HTML was rendered by Playwright and converted into a PNG image.</p><p>You can replace this HTML with your own email, invoice, report, certificate, notification, or other generated content.</p></div></body></html>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2",
+      "name": "Set HTML",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR-SCREENSHOT-API-DOMAIN.com/screenshot",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\"html\": $json.html}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "screenshot"
+            }
+          }
+        }
+      },
+      "id": "3",
+      "name": "HTML Screenshot API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set HTML": {
+      "main": [
+        [
+          {
+            "node": "HTML Screenshot API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "00000000-0000-0000-0000-000000000001",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
